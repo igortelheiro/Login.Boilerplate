@@ -61,7 +61,7 @@ namespace MGR.Login.Application.Handlers
 
             if (credentialsValidation.Succeeded == false)
             {
-                var isEmailConfirmed = credentialsValidation.IsNotAllowed;
+                var isEmailConfirmed = credentialsValidation.IsNotAllowed == false;
                 var errorMessage = isEmailConfirmed ? "Senha inválida" : "Email não confirmado";
                 throw new ArgumentException(errorMessage);
             }
