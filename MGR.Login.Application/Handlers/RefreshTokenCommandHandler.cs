@@ -14,14 +14,11 @@ namespace MGR.Login.Application.Handlers
         #region Initialize
         private readonly ITokenProviderService _tokenProvider;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
 
         public RefreshTokenCommandHandler(UserManager<IdentityUser> userManager,
-                                   SignInManager<IdentityUser> signInManager,
-                                   ITokenProviderService tokenProvider)
+                                          ITokenProviderService tokenProvider)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-            _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
         }
         #endregion

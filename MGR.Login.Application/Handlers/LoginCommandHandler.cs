@@ -34,7 +34,9 @@ namespace MGR.Login.Application.Handlers
             await ValidateCredentialsAsync(user, command);
 
             var token = _tokenProvider.GenerateJwt(user);
-            var refreshToken = await _tokenProvider.GenerateAndStoreRefreshTokenAsync(user);
+            var refreshToken = command.RememberMe
+                ? await _tokenProvider.GenerateAndStoreRefreshTokenAsync(user)
+                : null;
 
             return new LoginResult { Token = token, RefreshToken = refreshToken };
         }
@@ -58,8 +60,11 @@ namespace MGR.Login.Application.Handlers
 
             if (credentialsValidation.Succeeded == false)
             {
-                var isEmailConfirmed = credentialsValidation.IsNotAllowed == false;
-                var errorMessage = isEmailConfirmed ? "Senha inválida" : "Email não confirmado";
+                var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+                var errorMessage = isEmailConfirmed
+                    ? "Senha inválida"
+                    : "Email não confirmado";
+
                 throw new ArgumentException(errorMessage);
             }
         }
