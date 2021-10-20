@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace MGR.Login.Application.Commands
 {
-    public class LoginCommand : IRequest<LoginResult>
+    public record LoginCommand : IRequest<LoginResult>
     {
         [Required]
         [EmailAddress]

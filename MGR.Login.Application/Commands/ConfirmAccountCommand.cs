@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MGR.Login.Application.Commands
 {
-    public class ConfirmAccountCommand : IRequest
+    public record ConfirmAccountCommand : IRequest
     {
         [EmailAddress]
         [Required] public string Email { get; set; }

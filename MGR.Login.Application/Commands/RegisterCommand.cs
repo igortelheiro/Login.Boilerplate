@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace MGR.Login.Application.Commands
 {
-    public class RegisterCommand : IRequest<RegisterResult>
+    public record RegisterCommand : IRequest<RegisterResult>
     {
         [Required]
         [StringLength(50, ErrorMessage = "O nome deve ter entre {2} e {1} caracteres", MinimumLength = 3)]

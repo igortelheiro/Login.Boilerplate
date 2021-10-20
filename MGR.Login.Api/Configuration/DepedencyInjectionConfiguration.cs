@@ -15,6 +15,7 @@ namespace MGR.Login.Api.Configuration
         public static IServiceCollection RegisterServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IEmailBuilderService, EmailBuilderService>();
+            services.AddScoped<ITokenProviderService, TokenProviderService>();
 
             // Context
             services.ConfigureDbContext(configuration);

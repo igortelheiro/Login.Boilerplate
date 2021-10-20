@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using MGR.Login.Common;
 using MGR.Login.Infra.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,12 +14,43 @@ namespace MGR.Login.Api.Configuration
     {
         public static void ConfigureSecurityOptions(this IServiceCollection services, IConfiguration configuration)
         {
-            services.ConfigureIdentityOptions();
             services.ConfigureJwtOptions(configuration);
+            services.ConfigureIdentityOptions(configuration);
         }
 
 
-        private static void ConfigureIdentityOptions(this IServiceCollection services)
+        private static void ConfigureJwtOptions(this IServiceCollection services, IConfiguration configuration)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration[Jwt.SecurityKey]));
+            var issuer = configuration[Jwt.Issuer];
+            var audience = configuration[Jwt.Audience];
+
+            services.Configure<JwtConfiguration>(options =>
+            {
+                options.Issuer = issuer;
+                options.Audience = audience;
+                options.SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+                options.Expiry = DateTime.Now.AddHours(int.Parse(configuration[Jwt.ExpiryInHours]));
+            });
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = issuer,
+                        ValidAudience = audience,
+                        IssuerSigningKey = securityKey
+                    };
+                });
+        }
+
+
+        private static void ConfigureIdentityOptions(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<IdentityOptions>(options =>
             {
@@ -30,35 +62,13 @@ namespace MGR.Login.Api.Configuration
                 options.Password.RequiredUniqueChars = 1;
 
                 options.User.RequireUniqueEmail = true;
-
                 options.SignIn.RequireConfirmedEmail = true;
             });
 
-            services.AddDefaultIdentity<IdentityUser>(options =>
-                {
-                    options.SignIn.RequireConfirmedEmail = true;
-                })
+            services.AddDefaultIdentity<IdentityUser>()
+                .AddTokenProvider(configuration[Jwt.Issuer], typeof(DataProtectorTokenProvider<IdentityUser>))
                 .AddErrorDescriber<PortugueseIdentityErrorDescriber>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-        }
-
-
-        private static void ConfigureJwtOptions(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = configuration[Jwt.Issuer],
-                        ValidAudience = configuration[Jwt.Audience],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration[Jwt.SecurityKey]))
-                    };
-                });
         }
     }
 }

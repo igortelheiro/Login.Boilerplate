@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace MGR.Login.Api.Controllers
 {
     [ApiController]
-    [Route("Mail")]
+    [Route("[controller]")]
     public class MailController : Controller
     {
         #region Initialize

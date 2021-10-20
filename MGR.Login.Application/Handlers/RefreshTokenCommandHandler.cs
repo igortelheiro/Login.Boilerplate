@@ -1,22 +1,22 @@
 ﻿using MediatR;
 using MGR.Login.Application.Commands;
 using MGR.Login.Application.Models;
-using MGR.Login.Application.Services.Interfaces;
-using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using MGR.Login.Application.Services.Interfaces;
 
 namespace MGR.Login.Application.Handlers
 {
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
+    public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, LoginResult>
     {
         #region Initialize
+        private readonly ITokenProviderService _tokenProvider;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly ITokenProviderService _tokenProvider;
 
-        public LoginCommandHandler(UserManager<IdentityUser> userManager,
+        public RefreshTokenCommandHandler(UserManager<IdentityUser> userManager,
                                    SignInManager<IdentityUser> signInManager,
                                    ITokenProviderService tokenProvider)
         {
@@ -27,11 +27,11 @@ namespace MGR.Login.Application.Handlers
         #endregion
 
 
-        public async Task<LoginResult> Handle(LoginCommand command, CancellationToken cancellationToken)
+        public async Task<LoginResult> Handle(RefreshTokenCommand command, CancellationToken cancellationToken)
         {
             var user = await GetUserAsync(command.Email);
 
-            await ValidateCredentialsAsync(user, command);
+            await ValidateRefreshTokenAsync(user, command);
 
             var token = _tokenProvider.GenerateJwt(user);
             var refreshToken = await _tokenProvider.GenerateAndStoreRefreshTokenAsync(user);
@@ -50,18 +50,12 @@ namespace MGR.Login.Application.Handlers
         }
 
 
-        private async Task ValidateCredentialsAsync(IdentityUser user, LoginCommand command)
+        private async Task ValidateRefreshTokenAsync(IdentityUser user, RefreshTokenCommand command)
         {
-            var credentialsValidation = await _signInManager
-                .PasswordSignInAsync(user, command.Password, command.RememberMe,
-                    lockoutOnFailure: false).ConfigureAwait(false);
+            var storedToken = await _tokenProvider.RetrieveRefreshTokenAsync(user);
 
-            if (credentialsValidation.Succeeded == false)
-            {
-                var isEmailConfirmed = credentialsValidation.IsNotAllowed == false;
-                var errorMessage = isEmailConfirmed ? "Senha inválida" : "Email não confirmado";
-                throw new ArgumentException(errorMessage);
-            }
+            if (storedToken != command.RefreshToken)
+                throw new ArgumentException("O RefreshToken fornecido é inválido");
         }
     }
 }

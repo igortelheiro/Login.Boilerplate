@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MGR.Login.Application.Commands
 {
-    public class ResetPasswordCommand : IRequest
+    public record ResetPasswordCommand : IRequest
     {
         [EmailAddress]
         [Required] public string Email { get; set; }

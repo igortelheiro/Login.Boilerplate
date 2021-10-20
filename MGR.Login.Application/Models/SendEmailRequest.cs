@@ -2,14 +2,14 @@
 
 namespace MGR.Login.Application.Models
 {
-    public class EmailRequestModel
+    public class SendEmailRequest
     {
         [Required]
         [StringLength(30)]
         public string DestinationEmail { get; set; }
 
         [Required]
-        [StringLength(80)]
+        [StringLength(50)]
         public string Subject { get; set; }
 
         [StringLength(1000)]

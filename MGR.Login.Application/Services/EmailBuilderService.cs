@@ -13,7 +13,7 @@ namespace MGR.Login.Application.Services
         private const string ButtonStyle = "padding: 6px 16px; background-color: rgb(35, 78, 215); color: #FFFFFF; font-style: none;";
         
 
-        public EmailRequestModel BuildAccontConfirmationEmail(IdentityUser user, string token)
+        public SendEmailRequest BuildAccontConfirmationEmail(IdentityUser user, string token)
         {
             var subject = "Confirmação de Conta";
             var message = "Favor clicar no botão abaixo para confirmar sua conta:";
@@ -24,7 +24,7 @@ namespace MGR.Login.Application.Services
         }
 
 
-        public EmailRequestModel BuildPasswordRecoveryEmail(IdentityUser user, string token)
+        public SendEmailRequest BuildPasswordRecoveryEmail(IdentityUser user, string token)
         {
             var subject = "Recuperação de Senha";
             var message = "Favor clicar no botão abaixo para redefinir sua senha:";
@@ -35,7 +35,7 @@ namespace MGR.Login.Application.Services
         }
 
 
-        private EmailRequestModel BuildEmail(IdentityUser user, string subject, string message, string buttonText, string link)
+        private SendEmailRequest BuildEmail(IdentityUser user, string subject, string message, string buttonText, string link)
         {
             var emailTemplate = new StringBuilder();
             emailTemplate.AppendLine($"<p>Querido(a) {user.UserName},</p>");

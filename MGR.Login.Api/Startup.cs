@@ -18,6 +18,8 @@ namespace MGR.Login.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSwaggerGen();
+
             services.AddControllers();
             services.RegisterServices(Configuration);
         }
@@ -28,15 +30,16 @@ namespace MGR.Login.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CSN.Login.Api v1"));
             }
 
-            app.UseHttpsRedirection();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Login.Api v1"));
 
+            app.UseHttpsRedirection();
+            
             app.UseRouting();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }
 }
