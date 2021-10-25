@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MGR.Login.Application.Commands;
+using MGR.Login.Infra.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
@@ -12,8 +13,8 @@ namespace MGR.Login.Application.Handlers
     public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand>
     {
         #region Initilize
-        private readonly UserManager<IdentityUser> _userManager;
-        public ResetPasswordCommandHandler(UserManager<IdentityUser> userManager)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public ResetPasswordCommandHandler(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
@@ -31,7 +32,7 @@ namespace MGR.Login.Application.Handlers
         }
 
 
-        private async Task<IdentityUser> GetUserAsync(string email)
+        private async Task<ApplicationUser> GetUserAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
             if (user == null)
@@ -41,7 +42,7 @@ namespace MGR.Login.Application.Handlers
         }
 
 
-        private void ValidateNewPassword(IdentityUser user, string newPassword)
+        private void ValidateNewPassword(ApplicationUser user, string newPassword)
         {
             var passwordValidationError = string.Empty;
             var isPasswordValid = _userManager.PasswordValidators.All(v =>
@@ -58,7 +59,7 @@ namespace MGR.Login.Application.Handlers
         }
 
 
-        private async Task ResetPasswordAsync(IdentityUser user, ResetPasswordCommand request)
+        private async Task ResetPasswordAsync(ApplicationUser user, ResetPasswordCommand request)
         {
             var decodedToken = Base64UrlEncoder.Decode(request.Token);
             var passwordReset = await _userManager.ResetPasswordAsync(user, decodedToken, request.NewPassword).ConfigureAwait(false);

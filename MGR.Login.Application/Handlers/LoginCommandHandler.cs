@@ -2,6 +2,7 @@
 using MGR.Login.Application.Commands;
 using MGR.Login.Application.Models;
 using MGR.Login.Application.Services.Interfaces;
+using MGR.Login.Infra.Users;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading;
@@ -12,12 +13,12 @@ namespace MGR.Login.Application.Handlers
     public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
     {
         #region Initialize
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ITokenProviderService _tokenProvider;
 
-        public LoginCommandHandler(UserManager<IdentityUser> userManager,
-                                   SignInManager<IdentityUser> signInManager,
+        public LoginCommandHandler(UserManager<ApplicationUser> userManager,
+                                   SignInManager<ApplicationUser> signInManager,
                                    ITokenProviderService tokenProvider)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
@@ -33,16 +34,20 @@ namespace MGR.Login.Application.Handlers
 
             await ValidateCredentialsAsync(user, command);
 
-            var token = _tokenProvider.GenerateJwt(user);
-            var refreshToken = command.RememberMe
-                ? await _tokenProvider.GenerateAndStoreRefreshTokenAsync(user)
-                : null;
+            string token = _tokenProvider.GenerateJwt(user);
+            string refreshToken = string.Empty;
+            string nomeUsuario = user.NomeCompleto;
 
-            return new LoginResult { Token = token, RefreshToken = refreshToken };
+            if(command.RememberMe == true)
+            {
+                refreshToken = await _tokenProvider.GenerateAndStoreRefreshTokenAsync(user);
+            }
+            
+            return new LoginResult { Name = nomeUsuario, Token = token, RefreshToken = refreshToken };
         }
 
 
-        private async Task<IdentityUser> GetUserAsync(string email)
+        private async Task<ApplicationUser> GetUserAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
             if (user == null)
@@ -52,7 +57,7 @@ namespace MGR.Login.Application.Handlers
         }
 
 
-        private async Task ValidateCredentialsAsync(IdentityUser user, LoginCommand command)
+        private async Task ValidateCredentialsAsync(ApplicationUser user, LoginCommand command)
         {
             var credentialsValidation = await _signInManager
                 .PasswordSignInAsync(user, command.Password, command.RememberMe,
@@ -60,11 +65,8 @@ namespace MGR.Login.Application.Handlers
 
             if (credentialsValidation.Succeeded == false)
             {
-                var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
-                var errorMessage = isEmailConfirmed
-                    ? "Senha inválida"
-                    : "Email não confirmado";
-
+                var isEmailConfirmed = credentialsValidation.IsNotAllowed == false;
+                var errorMessage = isEmailConfirmed ? "Senha inválida" : "Email não confirmado";
                 throw new ArgumentException(errorMessage);
             }
         }

@@ -26,7 +26,7 @@ namespace MGR.Login.Api.Controllers
         #endregion
 
 
-        [HttpPost]
+        [HttpPost("Register")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public async Task<ActionResult<RegisterResult>> Register([FromBody] RegisterCommand command)
         {

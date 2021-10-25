@@ -1,4 +1,5 @@
 ﻿using MGR.Login.Application.Services.Interfaces;
+using MGR.Login.Infra.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,10 @@ namespace MGR.Login.Api.Controllers
     public class MailController : Controller
     {
         #region Initialize
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailBuilderService _emailBuilder;
 
-        public MailController(UserManager<IdentityUser> userManager,
+        public MailController(UserManager<ApplicationUser> userManager,
                               IEmailBuilderService emailBuilder)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
@@ -74,7 +75,7 @@ namespace MGR.Login.Api.Controllers
         }
 
 
-        private async Task<IdentityUser> GetUserByEmailAsync(string email)
+        private async Task<ApplicationUser> GetUserByEmailAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
             if (user == null)

@@ -2,6 +2,7 @@
 using System.Text;
 using MGR.Login.Common;
 using MGR.Login.Infra.Context;
+using MGR.Login.Infra.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -65,8 +66,8 @@ namespace MGR.Login.Api.Configuration
                 options.SignIn.RequireConfirmedEmail = true;
             });
 
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddTokenProvider(configuration[Jwt.Issuer], typeof(DataProtectorTokenProvider<IdentityUser>))
+            services.AddDefaultIdentity<ApplicationUser>()
+                .AddTokenProvider(configuration[Jwt.Issuer], typeof(DataProtectorTokenProvider<ApplicationUser>))
                 .AddErrorDescriber<PortugueseIdentityErrorDescriber>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
         }

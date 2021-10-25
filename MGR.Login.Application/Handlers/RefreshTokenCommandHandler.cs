@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using MGR.Login.Application.Services.Interfaces;
+using MGR.Login.Infra.Users;
 
 namespace MGR.Login.Application.Handlers
 {
@@ -13,12 +14,15 @@ namespace MGR.Login.Application.Handlers
     {
         #region Initialize
         private readonly ITokenProviderService _tokenProvider;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public RefreshTokenCommandHandler(UserManager<IdentityUser> userManager,
-                                          ITokenProviderService tokenProvider)
+        public RefreshTokenCommandHandler(UserManager<ApplicationUser> userManager,
+                                   SignInManager<ApplicationUser> signInManager,
+                                   ITokenProviderService tokenProvider)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
         }
         #endregion
@@ -37,7 +41,7 @@ namespace MGR.Login.Application.Handlers
         }
 
 
-        private async Task<IdentityUser> GetUserAsync(string email)
+        private async Task<ApplicationUser> GetUserAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
             if (user == null)
@@ -47,7 +51,7 @@ namespace MGR.Login.Application.Handlers
         }
 
 
-        private async Task ValidateRefreshTokenAsync(IdentityUser user, RefreshTokenCommand command)
+        private async Task ValidateRefreshTokenAsync(ApplicationUser user, RefreshTokenCommand command)
         {
             var storedToken = await _tokenProvider.RetrieveRefreshTokenAsync(user);
 

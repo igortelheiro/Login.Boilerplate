@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MediatR;
 using MGR.Login.Application.Commands;
 using MGR.Login.Application.Models;
+using MGR.Login.Infra.Users;
 using MGR.Login.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -15,10 +16,10 @@ namespace MGR.Login.Application.Handlers
     public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterResult>
     {
         #region Initialize
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailBuilderService _emailBuilder;
 
-        public RegisterCommandHandler(UserManager<IdentityUser> userManager,
+        public RegisterCommandHandler(UserManager<ApplicationUser> userManager,
                                       IEmailBuilderService emailBuilder)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
@@ -37,13 +38,18 @@ namespace MGR.Login.Application.Handlers
         }
 
 
-        private async Task<IdentityUser> CreateUserAsync(RegisterCommand command)
+        private async Task<ApplicationUser> CreateUserAsync(RegisterCommand command)
         {
-            var newUser = new IdentityUser
+            var newUser = new ApplicationUser
             {
                 Email = command.Email,
-                UserName = command.UserName,
-                PhoneNumber = command.PhoneNumber
+                NomeCompleto = command.NomeCompleto,
+                UserName = command.Email,
+                PhoneNumber = command.PhoneNumber,
+                CondominioId = command.CondominioId,
+                Bloco = command.Bloco,
+                NumeroApto = command.NumeroApto,
+                EmailConfirmed = true //Remover após implementação da confirmação de email
             };
 
             var result = await _userManager.CreateAsync(newUser, command.Password).ConfigureAwait(false);
@@ -57,7 +63,7 @@ namespace MGR.Login.Application.Handlers
         }
 
 
-        private async Task SendAccountConfirmationEmail(IdentityUser user)
+        private async Task SendAccountConfirmationEmail(ApplicationUser user)
         {
             var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var encryptedToken = EncryptToken(confirmationToken);
