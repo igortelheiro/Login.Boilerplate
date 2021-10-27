@@ -10,13 +10,10 @@ namespace MGR.Login.Application.Handlers
 {
     public class ConfirmAccountCommandHandler : IRequestHandler<ConfirmAccountCommand>
     {
-        #region Initialize
         private readonly UserManager<IdentityUser> _userManager;
-        public ConfirmAccountCommandHandler(UserManager<IdentityUser> userManager)
-        {
+
+        public ConfirmAccountCommandHandler(UserManager<IdentityUser> userManager) =>
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-        }
-        #endregion
 
 
         public async Task<Unit> Handle(ConfirmAccountCommand command, CancellationToken cancellationToken)
@@ -51,9 +48,6 @@ namespace MGR.Login.Application.Handlers
 
         private async Task ConfirmEmailAsync(IdentityUser user, string token)
         {
-            if (string.IsNullOrEmpty(token))
-                throw new ArgumentException("Token de confirmação não informado");
-
             var confirmation = await _userManager.ConfirmEmailAsync(user, token).ConfigureAwait(false);
             if (confirmation.Succeeded == false)
             {

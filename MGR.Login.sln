@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MGR.Login.Common", "MGR.Log
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MGR.Login.Infra", "MGR.Login.Infra\MGR.Login.Infra.csproj", "{1A884F1A-21BA-40E1-BAAC-AB30FF0EC088}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MGR.Login.Domain", "MGR.Login.Domain\MGR.Login.Domain.csproj", "{ED5F6C2C-FF61-4D78-950F-0ACEDD80DB64}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{1A884F1A-21BA-40E1-BAAC-AB30FF0EC088}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A884F1A-21BA-40E1-BAAC-AB30FF0EC088}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A884F1A-21BA-40E1-BAAC-AB30FF0EC088}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED5F6C2C-FF61-4D78-950F-0ACEDD80DB64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED5F6C2C-FF61-4D78-950F-0ACEDD80DB64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED5F6C2C-FF61-4D78-950F-0ACEDD80DB64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED5F6C2C-FF61-4D78-950F-0ACEDD80DB64}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

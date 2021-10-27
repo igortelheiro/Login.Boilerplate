@@ -2,7 +2,7 @@
 
 namespace MGR.Login.Application.Models
 {
-    public class SendEmailRequest
+    public class EmailRequest
     {
         [Required]
         [StringLength(30)]

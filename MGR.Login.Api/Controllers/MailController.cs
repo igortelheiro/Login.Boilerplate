@@ -1,11 +1,11 @@
 ﻿using MGR.Login.Application.Services.Interfaces;
+using MGR.Login.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Text;
 using System.Threading.Tasks;
+using MGR.Login.Application.Extensions;
 
 namespace MGR.Login.Api.Controllers
 {
@@ -16,12 +16,15 @@ namespace MGR.Login.Api.Controllers
         #region Initialize
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailBuilderService _emailBuilder;
+        private readonly ITokenProviderService _tokenProvider;
 
         public MailController(UserManager<IdentityUser> userManager,
-                              IEmailBuilderService emailBuilder)
+                              IEmailBuilderService emailBuilder,
+                              ITokenProviderService tokenProvider)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _emailBuilder = emailBuilder ?? throw new ArgumentNullException(nameof(emailBuilder));
+            _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
         }
         #endregion
 
@@ -29,17 +32,16 @@ namespace MGR.Login.Api.Controllers
         [HttpPost("AccountConfirmation")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> SendAccountConfirmationEmail([FromQuery] string email)
+        public async Task<IActionResult> SendAccountConfirmationEmail([FromQuery] string destinationEmail)
         {
             try
             {
-                var user = await GetUserByEmailAsync(email);
+                var user = await GetUserByEmailAsync(destinationEmail);
 
-                var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var token = EncryptToken(emailConfirmationToken);
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-                var emailRequest = _emailBuilder.BuildAccontConfirmationEmail(user, token);
-                //TODO: Enviar email para um EmailService
+                var email = _emailBuilder.BuildAccontConfirmationEmail(user, token);
+                await email.Send();
 
                 return Ok();
             }
@@ -53,17 +55,16 @@ namespace MGR.Login.Api.Controllers
         [HttpPost("PasswordRecovery")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> SendPasswordRecoveryEmail([FromQuery] string email)
+        public async Task<IActionResult> SendPasswordRecoveryEmail([FromQuery] string destinationEmail)
         {
             try
             {
-                var user = await GetUserByEmailAsync(email);
+                var user = await GetUserByEmailAsync(destinationEmail);
 
-                var passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var token = EncryptToken(passwordResetToken);
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-                var emailRequest = _emailBuilder.BuildPasswordRecoveryEmail(user, token);
-                //TODO: Enviar email para um EmailService
+                var email = _emailBuilder.BuildPasswordRecoveryEmail(user, token);
+                await email.Send();
 
                 return Ok();
             }
@@ -85,16 +86,12 @@ namespace MGR.Login.Api.Controllers
             return user;
         }
 
-        private static string EncryptToken(string token)
-        {
-            var bytes = Encoding.UTF8.GetBytes(token);
-            var encodedToken = Base64UrlEncoder.Encode(bytes);
-            return encodedToken;
-        }
 
-        private static ProblemDetails ToProblemDetails(Exception ex)
-        {
-            return new ProblemDetails { Title = "Erro ao enviar email", Detail = ex.Message };
-        }
+        private static ProblemDetails ToProblemDetails(Exception ex) =>
+            new()
+            {
+                Title = "Erro ao enviar email",
+                Detail = ex.Message
+            };
     }
 }

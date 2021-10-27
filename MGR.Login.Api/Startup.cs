@@ -19,9 +19,8 @@ namespace MGR.Login.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSwaggerGen();
-
-            services.AddControllers();
             services.RegisterServices(Configuration);
+            services.AddControllers();
         }
 
 

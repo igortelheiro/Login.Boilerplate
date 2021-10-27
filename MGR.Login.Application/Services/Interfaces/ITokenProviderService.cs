@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using MGR.Login.Domain;
 
 namespace MGR.Login.Application.Services.Interfaces
 {
     public interface ITokenProviderService
     {
-        string GenerateJwt(IdentityUser user);
-        Task<string> RetrieveRefreshTokenAsync(IdentityUser user);
-        Task<string> GenerateAndStoreRefreshTokenAsync(IdentityUser user);
+        Task<string> GenerateJwt(IdentityUser user);
+        //Task<string> RetrieveTokenAsync(IdentityUser user, TokenPurpose tokenPurpose);
+        Task<string> GenerateAndStoreTokenAsync(IdentityUser user, TokenPurpose tokenPurpose);
+        Task<bool> ValidateTokenAsync(IdentityUser user, TokenPurpose tokenPurpose, string token);
     }
 }

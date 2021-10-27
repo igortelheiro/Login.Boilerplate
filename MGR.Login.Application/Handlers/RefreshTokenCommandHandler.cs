@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using MGR.Login.Application.Services.Interfaces;
+using MGR.Login.Domain;
 
 namespace MGR.Login.Application.Handlers
 {
@@ -30,8 +31,8 @@ namespace MGR.Login.Application.Handlers
 
             await ValidateRefreshTokenAsync(user, command);
 
-            var token = _tokenProvider.GenerateJwt(user);
-            var refreshToken = await _tokenProvider.GenerateAndStoreRefreshTokenAsync(user);
+            var token = await _tokenProvider.GenerateJwt(user);
+            var refreshToken = await _tokenProvider.GenerateAndStoreTokenAsync(user, TokenPurpose.Refresh);
 
             return new LoginResult { Token = token, RefreshToken = refreshToken };
         }
@@ -49,10 +50,9 @@ namespace MGR.Login.Application.Handlers
 
         private async Task ValidateRefreshTokenAsync(IdentityUser user, RefreshTokenCommand command)
         {
-            var storedToken = await _tokenProvider.RetrieveRefreshTokenAsync(user);
-
-            if (storedToken != command.RefreshToken)
-                throw new ArgumentException("O RefreshToken fornecido é inválido");
+            var validToken = await _tokenProvider.ValidateTokenAsync(user, TokenPurpose.Refresh, command.RefreshToken);
+            if (validToken == false)
+                throw new ArgumentException("Token inválido ou expirado");
         }
     }
 }

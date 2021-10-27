@@ -1,12 +1,14 @@
-﻿using MGR.Login.Application.Commands;
-using MGR.Login.Application.Services.Interfaces;
+﻿using MGR.Login.Application.Services.Interfaces;
 using MGR.Login.Common;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
+using MGR.Login.Domain;
+using MGR.Login.Domain.Extensions;
+using System.Linq;
 
 namespace MGR.Login.Application.Services
 {
@@ -21,15 +23,17 @@ namespace MGR.Login.Application.Services
         }
 
 
-        public string GenerateJwt(IdentityUser user)
+        public async Task<string> GenerateJwt(IdentityUser user)
         {
-            var claims = new[]
+            var defaultClaims = new[]
             {
                 new Claim("id", user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email)
             };
-
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            var claims = defaultClaims.Concat(userClaims);
+            
             var jwt = new JwtSecurityToken(
                 _jwtConfiguration.Issuer,
                 _jwtConfiguration.Audience,
@@ -42,17 +46,28 @@ namespace MGR.Login.Application.Services
         }
 
 
-        public async Task<string> GenerateAndStoreRefreshTokenAsync(IdentityUser user)
+        public async Task<string> GenerateAndStoreTokenAsync(IdentityUser user, TokenPurpose tokenPurpose)
         {
-            await _userManager.RemoveAuthenticationTokenAsync(user, _jwtConfiguration.Issuer, nameof(RefreshTokenCommand.RefreshToken));
-            var refreshToken = await _userManager.GenerateUserTokenAsync(user, _jwtConfiguration.Issuer, nameof(RefreshTokenCommand.RefreshToken));
-            await _userManager.SetAuthenticationTokenAsync(user, _jwtConfiguration.Issuer, nameof(RefreshTokenCommand.RefreshToken), refreshToken);
+            var tokenName = tokenPurpose.GetName();
+            var tokenProvider = tokenPurpose.GetProviderName();
 
-            return refreshToken;
+            await _userManager.RemoveAuthenticationTokenAsync(user, tokenProvider, tokenName);
+            var token = await _userManager.GenerateUserTokenAsync(user, tokenProvider, tokenName);
+            await _userManager.SetAuthenticationTokenAsync(user, tokenProvider, tokenName, token);
+            
+            return token;
         }
 
 
-        public async Task<string> RetrieveRefreshTokenAsync(IdentityUser user) =>
-            await _userManager.GetAuthenticationTokenAsync(user, _jwtConfiguration.Issuer, nameof(RefreshTokenCommand.RefreshToken));
+        public async Task<bool> ValidateTokenAsync(IdentityUser user, TokenPurpose tokenPurpose, string token)
+        {
+            var tokenName = tokenPurpose.GetName();
+            var tokenProvider = tokenPurpose.GetProviderName();
+
+            var valid = await _userManager.VerifyUserTokenAsync(user, tokenProvider, tokenName, token);
+            await _userManager.RemoveAuthenticationTokenAsync(user, tokenProvider, tokenName);
+
+            return valid;
+        }
     }
 }

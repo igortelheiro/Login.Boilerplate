@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MGR.Login.Application.Commands;
+using MGR.Login.Application.Extensions;
 using MGR.Login.Application.Models;
 using MGR.Login.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -59,18 +60,9 @@ namespace MGR.Login.Application.Handlers
 
         private async Task SendAccountConfirmationEmail(IdentityUser user)
         {
-            var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var encryptedToken = EncryptToken(confirmationToken);
-            var email = _emailBuilder.BuildAccontConfirmationEmail(user, encryptedToken);
-            //TODO: Enviar email para um EmailService
-        }
-
-
-        private static string EncryptToken(string token)
-        {
-            var bytes = Encoding.UTF8.GetBytes(token);
-            var encodedToken = Base64UrlEncoder.Encode(bytes);
-            return encodedToken;
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var email = _emailBuilder.BuildAccontConfirmationEmail(user, token);
+            await email.Send();
         }
     }
 }
