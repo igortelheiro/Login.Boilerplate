@@ -1,6 +1,5 @@
 ﻿using MGR.Login.Api.Security.Base;
 using MGR.Login.Api.Security.Options;
-using MGR.Login.Domain;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -16,7 +15,6 @@ namespace MGR.Login.Api.Security
                                               ILogger<EmailConfirmationTokenProvider<TUser>> logger)
             : base(dataProtectionProvider, options, logger)
         {
-            SetTokenPurpose(TokenPurpose.EmailConfirmation.ToString());
         }
     }
 }
