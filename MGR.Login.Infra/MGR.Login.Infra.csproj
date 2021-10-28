@@ -18,4 +18,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.10" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MGR.Login.Domain\MGR.Login.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -4,12 +4,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MGR.Login.Api", "MGR.Login.Api\MGR.Login.Api.csproj", "{7109F8A2-89EA-4126-88A7-B1C8069DD509}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ED5F6C2C-FF61-4D78-950F-0ACEDD80DB64} = {ED5F6C2C-FF61-4D78-950F-0ACEDD80DB64}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MGR.Login.Application", "MGR.Login.Application\MGR.Login.Application.csproj", "{2845898B-4B89-4E1A-98C4-FFD529A6CE48}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MGR.Login.Common", "MGR.Login.Common\MGR.Login.Common.csproj", "{28D0AB22-D5FF-4C1E-A661-7C8056B12503}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MGR.Login.Infra", "MGR.Login.Infra\MGR.Login.Infra.csproj", "{1A884F1A-21BA-40E1-BAAC-AB30FF0EC088}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MGR.Login.Domain", "MGR.Login.Domain\MGR.Login.Domain.csproj", "{ED5F6C2C-FF61-4D78-950F-0ACEDD80DB64}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +38,10 @@ Global
 		{1A884F1A-21BA-40E1-BAAC-AB30FF0EC088}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A884F1A-21BA-40E1-BAAC-AB30FF0EC088}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A884F1A-21BA-40E1-BAAC-AB30FF0EC088}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED5F6C2C-FF61-4D78-950F-0ACEDD80DB64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED5F6C2C-FF61-4D78-950F-0ACEDD80DB64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED5F6C2C-FF61-4D78-950F-0ACEDD80DB64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED5F6C2C-FF61-4D78-950F-0ACEDD80DB64}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

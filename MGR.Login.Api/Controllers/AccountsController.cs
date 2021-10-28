@@ -92,7 +92,7 @@ namespace MGR.Login.Api.Controllers
         }
 
 
-        [HttpPost("Password")]
+        [HttpPost("PasswordRecovery")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)

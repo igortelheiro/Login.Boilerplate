@@ -2,11 +2,12 @@
 using MGR.Login.Application.Commands;
 using MGR.Login.Application.Models;
 using MGR.Login.Application.Services.Interfaces;
-using MGR.Login.Infra.Users;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using MGR.Login.Application.Extensions;
+using MGR.Login.Domain;
 
 namespace MGR.Login.Application.Handlers
 {
@@ -16,14 +17,17 @@ namespace MGR.Login.Application.Handlers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ITokenProviderService _tokenProvider;
+        private readonly IEmailBuilderService _emailBuilder;
 
         public LoginCommandHandler(UserManager<ApplicationUser> userManager,
                                    SignInManager<ApplicationUser> signInManager,
+                                   IEmailBuilderService emailBuilder,
                                    ITokenProviderService tokenProvider)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
+            _emailBuilder = emailBuilder ?? throw new ArgumentNullException(nameof(emailBuilder));
         }
         #endregion
 
@@ -34,22 +38,18 @@ namespace MGR.Login.Application.Handlers
 
             await ValidateCredentialsAsync(user, command);
 
-            string token = _tokenProvider.GenerateJwt(user);
-            string refreshToken = string.Empty;
-            string nomeUsuario = user.NomeCompleto;
+            var token = await _tokenProvider.GenerateJwt(user);
+            var refreshToken = command.RememberMe
+                ? await _tokenProvider.GenerateAndStoreTokenAsync(user, TokenPurpose.Refresh)
+                : null;
 
-            if(command.RememberMe == true)
-            {
-                refreshToken = await _tokenProvider.GenerateAndStoreRefreshTokenAsync(user);
-            }
-            
-            return new LoginResult { Name = nomeUsuario, Token = token, RefreshToken = refreshToken };
+            return new LoginResult { Token = token, RefreshToken = refreshToken };
         }
 
 
         private async Task<ApplicationUser> GetUserAsync(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
                 throw new ArgumentException($"Usuário não encontrado através do email {email}");
 
@@ -59,16 +59,26 @@ namespace MGR.Login.Application.Handlers
 
         private async Task ValidateCredentialsAsync(ApplicationUser user, LoginCommand command)
         {
-            var credentialsValidation = await _signInManager
+            var validation = await _signInManager
                 .PasswordSignInAsync(user, command.Password, command.RememberMe,
                     lockoutOnFailure: false).ConfigureAwait(false);
+            if (validation.Succeeded)
+                return;
+            
+            var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+            if (isEmailConfirmed)
+                throw new ArgumentException("Senha inválida");
 
-            if (credentialsValidation.Succeeded == false)
-            {
-                var isEmailConfirmed = credentialsValidation.IsNotAllowed == false;
-                var errorMessage = isEmailConfirmed ? "Senha inválida" : "Email não confirmado";
-                throw new ArgumentException(errorMessage);
-            }
+            await SendEmailConfirmationAsync(user);
+            throw new ArgumentException("Verificação de email pendente. Um email de confirmação foi enviado para você");
+        }
+
+
+        private async Task SendEmailConfirmationAsync(ApplicationUser user)
+        {
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var email = _emailBuilder.BuildAccontConfirmationEmail(user, token);
+            await email.Send();
         }
     }
 }

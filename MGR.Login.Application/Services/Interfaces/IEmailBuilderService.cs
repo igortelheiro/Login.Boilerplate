@@ -5,7 +5,7 @@ namespace MGR.Login.Application.Services.Interfaces
 {
     public interface IEmailBuilderService
     {
-        SendEmailRequest BuildPasswordRecoveryEmail(IdentityUser user, string token);
-        SendEmailRequest BuildAccontConfirmationEmail(IdentityUser user, string token);
+        EmailRequest BuildPasswordRecoveryEmail(IdentityUser user, string token);
+        EmailRequest BuildAccontConfirmationEmail(IdentityUser user, string token);
     }
 }

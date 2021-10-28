@@ -1,5 +1,4 @@
-﻿using MGR.Login.Infra.Users;
-using Microsoft.AspNetCore.Identity;
+﻿using MGR.Login.Domain;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

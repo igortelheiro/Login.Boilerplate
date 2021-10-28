@@ -17,13 +17,10 @@ namespace MGR.Login.Api.Configuration
             services.AddScoped<IEmailBuilderService, EmailBuilderService>();
             services.AddScoped<ITokenProviderService, TokenProviderService>();
 
-            // Context
             services.ConfigureDbContext(configuration);
 
-            // Security
             services.ConfigureSecurityOptions(configuration);
 
-            // MediatR
             services.AddMediatR(typeof(LoginCommand));
 
             return services;
@@ -34,6 +31,14 @@ namespace MGR.Login.Api.Configuration
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString(Connections.LoginDb)));
+        }
+
+
+        private static void ConfigureSecurityOptions(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.ConfigureIdentityOptions();
+            services.ConfigureTokenProvidersOptions();
+            services.ConfigureJwtOptions(configuration);
         }
     }
 }

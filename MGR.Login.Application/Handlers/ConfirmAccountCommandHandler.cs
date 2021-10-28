@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MGR.Login.Application.Commands;
-using MGR.Login.Infra.Users;
+using MGR.Login.Domain;
 using Microsoft.AspNetCore.Identity;
 
 namespace MGR.Login.Application.Handlers
@@ -13,12 +13,12 @@ namespace MGR.Login.Application.Handlers
     {
         #region Initialize
         private readonly UserManager<ApplicationUser> _userManager;
+
         public ConfirmAccountCommandHandler(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
         #endregion
-
 
         public async Task<Unit> Handle(ConfirmAccountCommand command, CancellationToken cancellationToken)
         {
@@ -52,9 +52,6 @@ namespace MGR.Login.Application.Handlers
 
         private async Task ConfirmEmailAsync(ApplicationUser user, string token)
         {
-            if (string.IsNullOrEmpty(token))
-                throw new ArgumentException("Token de confirmação não informado");
-
             var confirmation = await _userManager.ConfirmEmailAsync(user, token).ConfigureAwait(false);
             if (confirmation.Succeeded == false)
             {

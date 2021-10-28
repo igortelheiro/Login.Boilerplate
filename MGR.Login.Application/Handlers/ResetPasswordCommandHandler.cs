@@ -1,10 +1,14 @@
-﻿using System;
+﻿using MediatR;
+using MGR.Login.Application.Commands;
+using MGR.Login.Application.Services.Interfaces;
+using MGR.Login.Domain;
+using Microsoft.AspNetCore.Identity;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using MGR.Login.Application.Commands;
-using MGR.Login.Infra.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
@@ -14,9 +18,11 @@ namespace MGR.Login.Application.Handlers
     {
         #region Initilize
         private readonly UserManager<ApplicationUser> _userManager;
-        public ResetPasswordCommandHandler(UserManager<ApplicationUser> userManager)
+        private readonly ITokenProviderService _tokenProvider;
+        public ResetPasswordCommandHandler(UserManager<ApplicationUser> userManager, ITokenProviderService tokenProvider)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
         }
         #endregion
 
@@ -26,15 +32,15 @@ namespace MGR.Login.Application.Handlers
             var user = await GetUserAsync(request.Email);
 
             ValidateNewPassword(user, request.NewPassword);
-
             await ResetPasswordAsync(user, request);
+
             return new Unit();
         }
 
 
         private async Task<ApplicationUser> GetUserAsync(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
                 throw new ArgumentException($"Usuário não encontrado através do email {email}");
 
@@ -44,25 +50,20 @@ namespace MGR.Login.Application.Handlers
 
         private void ValidateNewPassword(ApplicationUser user, string newPassword)
         {
-            var passwordValidationError = string.Empty;
-            var isPasswordValid = _userManager.PasswordValidators.All(v =>
+            _userManager.PasswordValidators.All(v =>
             {
                 var validation = v.ValidateAsync(_userManager, user, newPassword).Result;
-                if (validation.Succeeded == false)
-                    passwordValidationError = validation.Errors.FirstOrDefault()?.Description;
+                if (validation.Succeeded) return true;
                 
-                return validation.Succeeded;
-            });
-
-            if (isPasswordValid == false)
+                var passwordValidationError = validation.Errors.FirstOrDefault()?.Description;
                 throw new ArgumentException(passwordValidationError);
+            });
         }
 
 
         private async Task ResetPasswordAsync(ApplicationUser user, ResetPasswordCommand request)
         {
-            var decodedToken = Base64UrlEncoder.Decode(request.Token);
-            var passwordReset = await _userManager.ResetPasswordAsync(user, decodedToken, request.NewPassword).ConfigureAwait(false);
+            var passwordReset = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
             if (passwordReset.Succeeded == false)
             {
                 var error = passwordReset.Errors.FirstOrDefault()?.Description;
