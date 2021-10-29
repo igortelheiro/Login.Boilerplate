@@ -9,10 +9,10 @@ using Microsoft.Extensions.Options;
 
 namespace Login.Api.Security.Base
 {
-    public abstract class BaseNumericTokenProvider<TUser> : DataProtectorTokenProvider<TUser>
+    public abstract class BaseTokenProvider<TUser> : DataProtectorTokenProvider<TUser>
         where TUser : IdentityUser
     {
-        protected BaseNumericTokenProvider(IDataProtectionProvider dataProtectionProvider,
+        protected BaseTokenProvider(IDataProtectionProvider dataProtectionProvider,
                                            IOptions<BaseTokenProviderOptions> options,
                                            ILogger<DataProtectorTokenProvider<TUser>> logger)
             : base(dataProtectionProvider, options, logger)
@@ -24,9 +24,15 @@ namespace Login.Api.Security.Base
             Task.FromResult(false);
 
 
-        public override async Task<string> GenerateAsync(string purpose, UserManager<TUser> manager, TUser user)
+        public override async Task<string> GenerateAsync(string purpose, UserManager<TUser> manager, TUser user) =>
+            await WriteAndSaveTokenAsync(purpose, manager, user);
+
+
+        protected abstract Task<string> GenerateCustomToken();
+
+        private async Task<string> WriteAndSaveTokenAsync(string purpose, UserManager<TUser> manager, TUser user)
         {
-            var numericToken = new Random().Next(999999).ToString();
+            var customToken = await GenerateCustomToken();
 
             var ms = new MemoryStream();
             var userId = await manager.GetUserIdAsync(user);
@@ -35,7 +41,7 @@ namespace Login.Api.Security.Base
                 writer.Write(DateTimeOffset.UtcNow.UtcTicks);
                 writer.Write(userId);
                 writer.Write(purpose ?? "");
-                writer.Write(numericToken);
+                writer.Write(customToken ?? "");
                 string stamp = null;
                 if (manager.SupportsUserSecurityStamp)
                 {
@@ -47,8 +53,8 @@ namespace Login.Api.Security.Base
             var encodedToken = Convert.ToBase64String(protectedBytes);
 
             await manager.SetAuthenticationTokenAsync(user, Options.Name, purpose, encodedToken);
-            
-            return numericToken;
+
+            return customToken ?? encodedToken;
         }
 
 
@@ -58,6 +64,7 @@ namespace Login.Api.Security.Base
             {
                 var storedToken = await manager.GetAuthenticationTokenAsync(user, Options.Name, purpose);
                 await manager.RemoveAuthenticationTokenAsync(user, Options.Name, purpose);
+
 
                 var unprotectedData = Protector.Unprotect(Convert.FromBase64String(storedToken));
                 var ms = new MemoryStream(unprotectedData);
@@ -83,8 +90,8 @@ namespace Login.Api.Security.Base
                         return false;
                     }
 
-                    var numericToken = reader.ReadString();
-                    if (!string.Equals(numericToken, token))
+                    var customToken = reader.ReadString();
+                    if (!string.Equals(customToken, token))
                     {
                         return false;
                     }
@@ -114,9 +121,9 @@ namespace Login.Api.Security.Base
                     return stampIsEmpty;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Do not leak exception
+                Logger.LogTrace(ex, "Erro ao validar token");
             }
 
             return false;

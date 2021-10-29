@@ -2,7 +2,7 @@
 using System.Text;
 using Login.Api.Security.Extensions;
 using Login.Api.Security.Options;
-using Login.Common;
+using Login.Application.Models;
 using Login.Domain;
 using Login.Domain.Extensions;
 using Login.Infrastructure.Context;
@@ -31,7 +31,7 @@ namespace Login.Api.Configuration
                 options.SignIn.RequireConfirmedEmail = true;
             });
 
-            services.AddDefaultIdentity<ApplicationUser>()
+            services.AddDefaultIdentity<IdentityUser>()
                 .AddErrorDescriber<PortugueseIdentityErrorDescriber>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddCustomTokenProviders();
@@ -68,10 +68,10 @@ namespace Login.Api.Configuration
 
         public static void ConfigureJwtOptions(this IServiceCollection services, IConfiguration configuration)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration[Jwt.SecurityKey]));
-            var issuer = configuration[Jwt.Issuer];
-            var audience = configuration[Jwt.Audience];
-            var expiryInHours = int.Parse(configuration[Jwt.ExpiryInHours]);
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SecurityKey"]));
+            var issuer = configuration["Jwt:Issuer"];
+            var audience = configuration["Jwt:Audience"];
+            var expiryInHours = int.Parse(configuration["Jwt:ExpiryInHours"]);
 
             services.Configure<JwtConfiguration>(options =>
             {

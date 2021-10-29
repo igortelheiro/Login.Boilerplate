@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Login.Application.Commands;
 using Login.Application.Models;
-using Login.Domain;
 using MediatR;
 using MGR.EventBus.Events;
 using MGR.EventBus.Interfaces;
@@ -15,11 +14,11 @@ namespace Login.Application.Handlers
     public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterResult>
     {
         #region Initialize
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly IEventBus _bus;
 
 
-        public RegisterCommandHandler(UserManager<ApplicationUser> userManager, IEventBus bus)
+        public RegisterCommandHandler(UserManager<IdentityUser> userManager, IEventBus bus)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _bus = bus ?? throw new ArgumentNullException(nameof(bus));
@@ -43,18 +42,13 @@ namespace Login.Application.Handlers
         }
 
 
-        private async Task<ApplicationUser> CreateUserAsync(RegisterCommand command)
+        private async Task<IdentityUser> CreateUserAsync(RegisterCommand command)
         {
-            var newUser = new ApplicationUser
+            var newUser = new IdentityUser
             {
                 Email = command.Email,
-                NomeCompleto = command.NomeCompleto,
                 UserName = command.Email,
-                PhoneNumber = command.PhoneNumber,
-                CondominioId = command.CondominioId,
-                Bloco = command.Bloco,
-                NumeroApto = command.NumeroApto,
-                EmailConfirmed = true //Remover após implementação da confirmação de email
+                PhoneNumber = command.PhoneNumber
             };
 
             var result = await _userManager.CreateAsync(newUser, command.Password).ConfigureAwait(false);

@@ -26,7 +26,7 @@ namespace Login.Api.Controllers
         #endregion
 
 
-        [HttpPost]
+        [HttpPost("Register")]
         [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
         public async Task<ActionResult<RegisterResult>> Register([FromBody] RegisterCommand command)
         {
@@ -38,39 +38,6 @@ namespace Login.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.ToProblemDetails("Erro ao tentar registrar novo usuário"));
-            }
-        }
-
-
-        [HttpPost("Login")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<LoginResult>> Login([FromBody] LoginCommand command)
-        {
-            try
-            {
-                var response = await _mediator.Send(command, _cancellationToken).ConfigureAwait(false);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.ToProblemDetails("Erro ao tentar fazer login"));
-            }
-        }
-
-
-        [HttpPost("RefreshToken")]
-        [ApiConventionMethod(typeof(DefaultApiConventions), nameof(DefaultApiConventions.Post))]
-        public async Task<ActionResult<LoginResult>> RefreshToken([FromBody] RefreshTokenCommand command)
-        {
-            try
-            {
-                var response = await _mediator.Send(command, _cancellationToken).ConfigureAwait(false);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.ToProblemDetails("Erro ao gerar novo token"));
             }
         }
 

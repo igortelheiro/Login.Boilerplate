@@ -15,11 +15,11 @@ namespace Login.Api.Controllers
     public class MailController : Controller
     {
         #region Initialize
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailBuilderService _emailBuilder;
         private readonly IEventBus _bus;
 
-        public MailController(UserManager<ApplicationUser> userManager,
+        public MailController(UserManager<IdentityUser> userManager,
                               IEmailBuilderService emailBuilder,
                               IEventBus bus)
         {
@@ -76,7 +76,7 @@ namespace Login.Api.Controllers
         }
 
 
-        private async Task<ApplicationUser> GetUserByEmailAsync(string email)
+        private async Task<IdentityUser> GetUserByEmailAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
             if (user == null)

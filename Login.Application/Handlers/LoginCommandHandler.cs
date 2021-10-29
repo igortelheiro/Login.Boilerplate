@@ -15,14 +15,14 @@ namespace Login.Application.Handlers
     public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResult>
     {
         #region Initialize
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ITokenProviderService _tokenProvider;
         private readonly IEmailBuilderService _emailBuilder;
         private readonly IEventBus _bus;
 
-        public LoginCommandHandler(UserManager<ApplicationUser> userManager,
-                                   SignInManager<ApplicationUser> signInManager,
+        public LoginCommandHandler(UserManager<IdentityUser> userManager,
+                                   SignInManager<IdentityUser> signInManager,
                                    IEmailBuilderService emailBuilder,
                                    ITokenProviderService tokenProvider,
                                    IEventBus bus)
@@ -51,7 +51,7 @@ namespace Login.Application.Handlers
         }
 
 
-        private async Task<ApplicationUser> GetUserAsync(string email)
+        private async Task<IdentityUser> GetUserAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
@@ -61,7 +61,7 @@ namespace Login.Application.Handlers
         }
 
 
-        private async Task ValidateCredentialsAsync(ApplicationUser user, LoginCommand command)
+        private async Task ValidateCredentialsAsync(IdentityUser user, LoginCommand command)
         {
             var validation = await _signInManager
                 .PasswordSignInAsync(user, command.Password, command.RememberMe,
@@ -78,7 +78,7 @@ namespace Login.Application.Handlers
         }
 
 
-        private async Task SendEmailConfirmationAsync(ApplicationUser user)
+        private async Task SendEmailConfirmationAsync(IdentityUser user)
         {
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var email = _emailBuilder.BuildAccontConfirmationEmail(user, token);

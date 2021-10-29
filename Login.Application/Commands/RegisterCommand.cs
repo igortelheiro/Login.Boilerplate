@@ -8,22 +8,7 @@ namespace Login.Application.Commands
     public class RegisterCommand : IRequest<RegisterResult>
     {
         [Required]
-        [StringLength(50, ErrorMessage = "O Nome deve ter entre {2} e {1} caracteres", MinimumLength = 3)]
-        public string NomeCompleto { get; set; }
-
-        [Required]
-        public int CondominioId { get; set; }
-
-        [Required]
-        [StringLength(5, ErrorMessage = "O Nome deve ter entre {2} e {1} caracteres", MinimumLength = 1)]
-        public string Bloco { get; set; }
-
-        [Required]
-        public int NumeroApto { get; set; }
-
-        [Required]
-        public int PerfilAcesso { get; set; }
-
+        [StringLength(50, ErrorMessage = "O nome deve ter entre {2} e {1} caracteres", MinimumLength = 3)]
         public string UserName { get; set; }
 
 
