@@ -1,7 +1,6 @@
 ﻿using Login.Application.Commands;
 using Login.Application.Services;
 using Login.Application.Services.Interfaces;
-using Login.Common;
 using Login.Infrastructure.Context;
 using MediatR;
 using MGR.RabbitMQEventBus.Configuration;
@@ -33,7 +32,7 @@ namespace Login.Api.Configuration
         private static void ConfigureDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString(Connections.LoginDb)));
+                options.UseSqlServer(configuration.GetConnectionString("LoginDb")));
         }
 
 

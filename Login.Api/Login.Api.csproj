@@ -26,7 +26,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Login.Application\Login.Application.csproj" />
-    <ProjectReference Include="..\Login.Common\Login.Common.csproj" />
     <ProjectReference Include="..\Login.Domain\Login.Domain.csproj" />
     <ProjectReference Include="..\Login.Infrastructure\Login.Infrastructure.csproj" />
   </ItemGroup>
