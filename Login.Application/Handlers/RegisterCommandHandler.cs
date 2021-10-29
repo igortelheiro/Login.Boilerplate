@@ -3,7 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Login.Application.Commands;
+using Login.Application.Extensions;
 using Login.Application.Models;
+using Login.Application.Services.Interfaces;
 using MediatR;
 using MGR.EventBus.Events;
 using MGR.EventBus.Interfaces;
@@ -15,12 +17,13 @@ namespace Login.Application.Handlers
     {
         #region Initialize
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IEmailBuilderService _emailBuilder;
         private readonly IEventBus _bus;
 
-
-        public RegisterCommandHandler(UserManager<IdentityUser> userManager, IEventBus bus)
+        public RegisterCommandHandler(UserManager<IdentityUser> userManager, IEmailBuilderService emailBuilder, IEventBus bus)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _emailBuilder = emailBuilder ?? throw new ArgumentNullException(nameof(emailBuilder));
             _bus = bus ?? throw new ArgumentNullException(nameof(bus));
         }
         #endregion
@@ -37,6 +40,10 @@ namespace Login.Application.Handlers
                 Email = newUser.Email
             };
             await _bus.Publish(userCreated);
+
+            var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+            var accountConfirmationEmailRequest = _emailBuilder.BuildAccontConfirmationEmail(newUser, confirmationToken);
+            await accountConfirmationEmailRequest.Send(_bus);
 
             return new RegisterResult { NewUserId = newUser.Id };
         }
