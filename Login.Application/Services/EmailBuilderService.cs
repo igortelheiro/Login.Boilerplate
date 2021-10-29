@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Login.Application.Models;
 using Login.Application.Services.Interfaces;
+using Login.Domain;
 using Microsoft.AspNetCore.Identity;
 
 namespace Login.Application.Services
@@ -35,7 +36,7 @@ namespace Login.Application.Services
             emailTemplate.AppendLine($"<p style=\"{TokenBoxStyle}\">{token}</p>");
             emailTemplate.AppendLine("<p>- MGR</p>");
 
-            return new()
+            return new EmailRequest()
             {
                 Subject = subject,
                 DestinationEmail = user.Email,

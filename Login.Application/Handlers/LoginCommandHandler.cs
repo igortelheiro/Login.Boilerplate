@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using EventBus.Core.Interfaces;
 using Login.Application.Commands;
-using Login.Application.Extensions;
 using Login.Application.Models;
 using Login.Application.Services.Interfaces;
 using Login.Domain;
+using Login.EventBusAdapter.Extensions;
 using MediatR;
-using MGR.EventBus.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace Login.Application.Handlers
@@ -82,7 +82,7 @@ namespace Login.Application.Handlers
         {
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var email = _emailBuilder.BuildAccontConfirmationEmail(user, token);
-            await email.Send(_bus);
+            await _bus.Send(email);
         }
     }
 }
