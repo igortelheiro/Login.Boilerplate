@@ -10,7 +10,9 @@ using System.Threading.Tasks;
 
 namespace Login.Api.Controllers
 {
-    public class LoginController : ControllerBase
+    [ApiController]
+    [Route("[controller]")]
+    public class LoginController : Controller
     {
         #region Initialize
         private readonly IMediator _mediator;

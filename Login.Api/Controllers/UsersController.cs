@@ -12,7 +12,7 @@ namespace Login.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UsersController : ControllerBase
+    public class UsersController : Controller
     {
         #region Initialize
         private readonly IMediator _mediator;
@@ -42,7 +42,7 @@ namespace Login.Api.Controllers
         }
 
 
-        [HttpPost("Confirmation")]
+        [HttpPost("AccountConfirmation")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ConfirmAccount([FromBody] ConfirmAccountCommand command)
