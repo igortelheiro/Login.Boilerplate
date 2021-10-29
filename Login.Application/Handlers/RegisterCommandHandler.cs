@@ -35,17 +35,9 @@ namespace Login.Application.Handlers
         {
             var newUser = await CreateUserAsync(command);
 
-            var userCreated = new UserCreatedEvent
-            {
-                UserId = newUser.Id,
-                Name = newUser.UserName,
-                Email = newUser.Email
-            };
-            await _bus.Publish(userCreated);
-
             var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-            var accountConfirmationEmail = _emailBuilder.BuildAccontConfirmationEmail(newUser, confirmationToken);
-            await _bus.Send(accountConfirmationEmail);
+            var email = _emailBuilder.BuildAccontConfirmationEmail(newUser, confirmationToken);
+            await email.Send();
 
             return new RegisterResult { NewUserId = newUser.Id };
         }

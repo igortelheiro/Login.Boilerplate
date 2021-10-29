@@ -41,7 +41,7 @@ namespace Login.Api.Controllers
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
                 var email = _emailBuilder.BuildAccontConfirmationEmail(user, token);
-                await _bus.Send(email);
+                await email.Send();
 
                 return Ok();
             }
@@ -64,7 +64,7 @@ namespace Login.Api.Controllers
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
                 var email = _emailBuilder.BuildPasswordRecoveryEmail(user, token);
-                await _bus.Send(email);
+                await email.Send();
 
                 return Ok();
             }
