@@ -2,10 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Login.Application.Commands;
+using Login.Application.Extensions;
 using Login.Application.Models;
 using Login.Application.Services.Interfaces;
 using Login.Domain;
-using Login.EventBusAdapter.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
