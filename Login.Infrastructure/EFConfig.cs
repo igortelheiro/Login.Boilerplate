@@ -10,7 +10,7 @@ namespace Login.EntityFrameworkAdapter
         public static void ConfigureEntityFramework(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("LoginDb")));
+                options.UseSqlServer(configuration.GetConnectionString("DbConnection")));
         }
     }
 }

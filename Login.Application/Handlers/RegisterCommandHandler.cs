@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using EventBus.Core.Events;
+﻿using EventBus.Core.Events;
 using EventBus.Core.Interfaces;
 using Login.Application.Commands;
 using Login.Application.Models;
@@ -10,6 +6,10 @@ using Login.Application.Services.Interfaces;
 using Login.EventBusAdapter.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Login.Application.Handlers
 {

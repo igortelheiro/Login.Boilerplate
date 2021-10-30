@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using EventBus.Core.Interfaces;
+using Login.Application.Extensions;
 using Login.EventBusAdapter.Extensions;
 
 namespace Login.Api.Controllers
@@ -19,8 +20,7 @@ namespace Login.Api.Controllers
         private readonly IEventBus _bus;
 
         public MailController(UserManager<IdentityUser> userManager,
-                              IEmailBuilderService emailBuilder,
-                              IEventBus bus)
+                              IEmailBuilderService emailBuilder, IEventBus bus)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _emailBuilder = emailBuilder ?? throw new ArgumentNullException(nameof(emailBuilder));
