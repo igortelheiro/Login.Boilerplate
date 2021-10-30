@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using EventBus.Core.Events;
+using EventBus.Core.Interfaces;
 using Login.Application.Commands;
-using Login.Application.Extensions;
 using Login.Application.Models;
 using Login.Application.Services.Interfaces;
+using Login.EventBusAdapter.Extensions;
 using MediatR;
-using MGR.EventBus.Events;
-using MGR.EventBus.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace Login.Application.Handlers
@@ -20,7 +20,9 @@ namespace Login.Application.Handlers
         private readonly IEmailBuilderService _emailBuilder;
         private readonly IEventBus _bus;
 
-        public RegisterCommandHandler(UserManager<IdentityUser> userManager, IEmailBuilderService emailBuilder, IEventBus bus)
+        public RegisterCommandHandler(UserManager<IdentityUser> userManager,
+                                      IEmailBuilderService emailBuilder,
+                                      IEventBus bus)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _emailBuilder = emailBuilder ?? throw new ArgumentNullException(nameof(emailBuilder));
@@ -42,8 +44,8 @@ namespace Login.Application.Handlers
             await _bus.Publish(userCreated);
 
             var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-            var accountConfirmationEmailRequest = _emailBuilder.BuildAccontConfirmationEmail(newUser, confirmationToken);
-            await accountConfirmationEmailRequest.Send(_bus);
+            var email = _emailBuilder.BuildAccontConfirmationEmail(newUser, confirmationToken);
+            await _bus.Send(email);
 
             return new RegisterResult { NewUserId = newUser.Id };
         }

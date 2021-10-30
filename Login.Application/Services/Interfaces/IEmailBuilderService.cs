@@ -1,4 +1,5 @@
 ﻿using Login.Application.Models;
+using Login.Domain;
 using Microsoft.AspNetCore.Identity;
 
 namespace Login.Application.Services.Interfaces

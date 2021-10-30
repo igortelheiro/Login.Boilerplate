@@ -1,12 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Login.Application.Extensions;
-using Login.Application.Services.Interfaces;
-using Login.Domain;
-using MGR.EventBus.Interfaces;
+﻿using Login.Application.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
+using EventBus.Core.Interfaces;
+using Login.EventBusAdapter.Extensions;
 
 namespace Login.Api.Controllers
 {
@@ -42,7 +41,7 @@ namespace Login.Api.Controllers
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
                 var email = _emailBuilder.BuildAccontConfirmationEmail(user, token);
-                await email.Send(_bus);
+                await _bus.Send(email);
 
                 return Ok();
             }
@@ -65,7 +64,7 @@ namespace Login.Api.Controllers
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
                 var email = _emailBuilder.BuildPasswordRecoveryEmail(user, token);
-                await email.Send(_bus);
+                await _bus.Send(email);
 
                 return Ok();
             }

@@ -12,13 +12,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Login.Api", "Login.Api\Logi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Login.Application", "Login.Application\Login.Application.csproj", "{48CCC31B-53E7-4DFA-B945-72EEF8631FFE}"
 	ProjectSection(ProjectDependencies) = postProject
+		{F19F711D-FB91-413A-9B47-344AE0B57581} = {F19F711D-FB91-413A-9B47-344AE0B57581}
 		{BE0D197C-5E10-4E66-9B2F-E62F5D69F2BB} = {BE0D197C-5E10-4E66-9B2F-E62F5D69F2BB}
 		{691AC1FA-B39F-4046-A443-8150139EC54A} = {691AC1FA-B39F-4046-A443-8150139EC54A}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Login.Domain", "Login.Domain\Login.Domain.csproj", "{691AC1FA-B39F-4046-A443-8150139EC54A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Login.Infrastructure", "Login.Infrastructure\Login.Infrastructure.csproj", "{BE0D197C-5E10-4E66-9B2F-E62F5D69F2BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Login.EntityFrameworkAdapter", "Login.Infrastructure\Login.EntityFrameworkAdapter.csproj", "{BE0D197C-5E10-4E66-9B2F-E62F5D69F2BB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{691AC1FA-B39F-4046-A443-8150139EC54A} = {691AC1FA-B39F-4046-A443-8150139EC54A}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Login.EventBusAdapter", "Login.EventBusAdapter\Login.EventBusAdapter.csproj", "{F19F711D-FB91-413A-9B47-344AE0B57581}"
 	ProjectSection(ProjectDependencies) = postProject
 		{691AC1FA-B39F-4046-A443-8150139EC54A} = {691AC1FA-B39F-4046-A443-8150139EC54A}
 	EndProjectSection
@@ -45,6 +51,10 @@ Global
 		{BE0D197C-5E10-4E66-9B2F-E62F5D69F2BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE0D197C-5E10-4E66-9B2F-E62F5D69F2BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE0D197C-5E10-4E66-9B2F-E62F5D69F2BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F19F711D-FB91-413A-9B47-344AE0B57581}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F19F711D-FB91-413A-9B47-344AE0B57581}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F19F711D-FB91-413A-9B47-344AE0B57581}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F19F711D-FB91-413A-9B47-344AE0B57581}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
