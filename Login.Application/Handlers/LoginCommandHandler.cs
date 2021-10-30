@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using EventBus.Core.Interfaces;
 using Login.Application.Commands;
 using Login.Application.Models;
 using Login.Application.Services.Interfaces;
@@ -19,19 +18,16 @@ namespace Login.Application.Handlers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ITokenProviderService _tokenProvider;
         private readonly IEmailBuilderService _emailBuilder;
-        private readonly IEventBus _bus;
 
         public LoginCommandHandler(UserManager<IdentityUser> userManager,
                                    SignInManager<IdentityUser> signInManager,
                                    IEmailBuilderService emailBuilder,
-                                   ITokenProviderService tokenProvider,
-                                   IEventBus bus)
+                                   ITokenProviderService tokenProvider)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
             _emailBuilder = emailBuilder ?? throw new ArgumentNullException(nameof(emailBuilder));
-            _bus = bus ?? throw new ArgumentNullException(nameof(bus));
         }
         #endregion
 

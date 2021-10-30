@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using EventBus.Core.Interfaces;
-using Login.EventBusAdapter.Extensions;
+using Login.Application.Extensions;
 
 namespace Login.Api.Controllers
 {
@@ -16,15 +15,12 @@ namespace Login.Api.Controllers
         #region Initialize
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailBuilderService _emailBuilder;
-        private readonly IEventBus _bus;
 
         public MailController(UserManager<IdentityUser> userManager,
-                              IEmailBuilderService emailBuilder,
-                              IEventBus bus)
+                              IEmailBuilderService emailBuilder)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _emailBuilder = emailBuilder ?? throw new ArgumentNullException(nameof(emailBuilder));
-            _bus = bus ?? throw new ArgumentNullException(nameof(bus));
         }
         #endregion
 

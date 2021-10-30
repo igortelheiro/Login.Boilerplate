@@ -1,15 +1,13 @@
-﻿using System;
+﻿using Login.Application.Commands;
+using Login.Application.Models;
+using Login.Application.Services.Interfaces;
+using MediatR;
+using Microsoft.AspNetCore.Identity;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using EventBus.Core.Events;
-using EventBus.Core.Interfaces;
-using Login.Application.Commands;
-using Login.Application.Models;
-using Login.Application.Services.Interfaces;
-using Login.EventBusAdapter.Extensions;
-using MediatR;
-using Microsoft.AspNetCore.Identity;
+using Login.Application.Extensions;
 
 namespace Login.Application.Handlers
 {
@@ -18,15 +16,12 @@ namespace Login.Application.Handlers
         #region Initialize
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailBuilderService _emailBuilder;
-        private readonly IEventBus _bus;
 
         public RegisterCommandHandler(UserManager<IdentityUser> userManager,
-                                      IEmailBuilderService emailBuilder,
-                                      IEventBus bus)
+                                      IEmailBuilderService emailBuilder)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _emailBuilder = emailBuilder ?? throw new ArgumentNullException(nameof(emailBuilder));
-            _bus = bus ?? throw new ArgumentNullException(nameof(bus));
         }
         #endregion
 
