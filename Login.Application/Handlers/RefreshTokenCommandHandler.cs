@@ -14,11 +14,11 @@ namespace Login.Application.Handlers
     {
         #region Initialize
         private readonly ITokenProviderService _tokenProvider;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public RefreshTokenCommandHandler(UserManager<IdentityUser> userManager,
-                                   SignInManager<IdentityUser> signInManager,
+        public RefreshTokenCommandHandler(UserManager<ApplicationUser> userManager,
+                                   SignInManager<ApplicationUser> signInManager,
                                    ITokenProviderService tokenProvider)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
@@ -41,7 +41,7 @@ namespace Login.Application.Handlers
         }
 
 
-        private async Task<IdentityUser> GetUserAsync(string email)
+        private async Task<ApplicationUser> GetUserAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
             if (user == null)
@@ -51,7 +51,7 @@ namespace Login.Application.Handlers
         }
 
 
-        private async Task ValidateRefreshTokenAsync(IdentityUser user, RefreshTokenCommand command)
+        private async Task ValidateRefreshTokenAsync(ApplicationUser user, RefreshTokenCommand command)
         {
             var validToken = await _tokenProvider.ValidateTokenAsync(user, TokenPurpose.Refresh, command.RefreshToken);
             if (validToken == false)

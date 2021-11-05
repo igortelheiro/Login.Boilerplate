@@ -24,8 +24,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Login.EntityFrameworkAdapte
 		{691AC1FA-B39F-4046-A443-8150139EC54A} = {691AC1FA-B39F-4046-A443-8150139EC54A}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Login.EventBusAdapter", "Login.EventBusAdapter\Login.EventBusAdapter.csproj", "{F19F711D-FB91-413A-9B47-344AE0B57581}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Login.EventBusAdapter", "Login.EventBusAdapter\Login.EventBusAdapter.csproj", "{F19F711D-FB91-413A-9B47-344AE0B57581}"
 	ProjectSection(ProjectDependencies) = postProject
+		{BE0D197C-5E10-4E66-9B2F-E62F5D69F2BB} = {BE0D197C-5E10-4E66-9B2F-E62F5D69F2BB}
 		{691AC1FA-B39F-4046-A443-8150139EC54A} = {691AC1FA-B39F-4046-A443-8150139EC54A}
 	EndProjectSection
 EndProject

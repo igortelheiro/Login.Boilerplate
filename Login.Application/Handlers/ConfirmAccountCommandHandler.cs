@@ -12,9 +12,9 @@ namespace Login.Application.Handlers
     public class ConfirmAccountCommandHandler : IRequestHandler<ConfirmAccountCommand>
     {
         #region Initialize
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ConfirmAccountCommandHandler(UserManager<IdentityUser> userManager)
+        public ConfirmAccountCommandHandler(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
@@ -32,7 +32,7 @@ namespace Login.Application.Handlers
         }
 
 
-        private async Task<IdentityUser> GetUserAsync(string email)
+        private async Task<ApplicationUser> GetUserAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
             if (user == null)
@@ -42,7 +42,7 @@ namespace Login.Application.Handlers
         }
 
 
-        private async Task CheckEmailAlreadyConfirmedAsync(IdentityUser user)
+        private async Task CheckEmailAlreadyConfirmedAsync(ApplicationUser user)
         {
             var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user).ConfigureAwait(false);
             if (isEmailConfirmed)
@@ -50,7 +50,7 @@ namespace Login.Application.Handlers
         }
 
 
-        private async Task ConfirmEmailAsync(IdentityUser user, string token)
+        private async Task ConfirmEmailAsync(ApplicationUser user, string token)
         {
             var confirmation = await _userManager.ConfirmEmailAsync(user, token).ConfigureAwait(false);
             if (confirmation.Succeeded == false)

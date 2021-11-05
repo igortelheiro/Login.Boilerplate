@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using Login.Api.Security.Extensions;
+using Login.Domain;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Options;
 namespace Login.Api.Security.Base
 {
     public abstract class BaseTokenProvider<TUser> : DataProtectorTokenProvider<TUser>
-        where TUser : IdentityUser
+        where TUser : ApplicationUser
     {
         protected BaseTokenProvider(IDataProtectionProvider dataProtectionProvider,
                                            IOptions<BaseTokenProviderOptions> options,

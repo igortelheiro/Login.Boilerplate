@@ -1,18 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EventBus.Core" Version="1.0.11" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="7.2.3" />
+    <PackageReference Include="EventBus.Core" Version="1.2.0-local" />
+    <PackageReference Include="IntegrationEventLogEF" Version="1.5.1-local" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="7.2.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
-    <PackageReference Include="RabbitMQEventBus" Version="1.0.11" />
+    <PackageReference Include="RabbitMQEventBus" Version="1.0.12" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Login.Domain\Login.Domain.csproj" />
+    <ProjectReference Include="..\Login.Infrastructure\Login.EntityFrameworkAdapter.csproj" />
   </ItemGroup>
 
 </Project>

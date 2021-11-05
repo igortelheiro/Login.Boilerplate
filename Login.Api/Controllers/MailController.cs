@@ -4,9 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using EventBus.Core.Interfaces;
 using Login.Application.Extensions;
-using Login.EventBusAdapter.Extensions;
+using Login.Domain;
 
 namespace Login.Api.Controllers
 {
@@ -15,16 +14,17 @@ namespace Login.Api.Controllers
     public class MailController : Controller
     {
         #region Initialize
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailBuilderService _emailBuilder;
-        private readonly IEventBus _bus;
+        private readonly IServiceProvider _serviceProvider;
 
-        public MailController(UserManager<IdentityUser> userManager,
-                              IEmailBuilderService emailBuilder, IEventBus bus)
+        public MailController(UserManager<ApplicationUser> userManager,
+                              IEmailBuilderService emailBuilder,
+                              IServiceProvider serviceProvider)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _emailBuilder = emailBuilder ?? throw new ArgumentNullException(nameof(emailBuilder));
-            _bus = bus ?? throw new ArgumentNullException(nameof(bus));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
         #endregion
 
@@ -41,7 +41,7 @@ namespace Login.Api.Controllers
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
                 var email = _emailBuilder.BuildAccontConfirmationEmail(user, token);
-                await _bus.Send(email);
+                await email.Send(_serviceProvider);
 
                 return Ok();
             }
@@ -64,7 +64,7 @@ namespace Login.Api.Controllers
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
                 var email = _emailBuilder.BuildPasswordRecoveryEmail(user, token);
-                await _bus.Send(email);
+                await email.Send(_serviceProvider);
 
                 return Ok();
             }
@@ -75,7 +75,7 @@ namespace Login.Api.Controllers
         }
 
 
-        private async Task<IdentityUser> GetUserByEmailAsync(string email)
+        private async Task<ApplicationUser> GetUserByEmailAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
             if (user == null)

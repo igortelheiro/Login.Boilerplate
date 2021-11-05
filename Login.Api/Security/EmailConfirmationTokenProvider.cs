@@ -2,15 +2,15 @@
 using System.Threading.Tasks;
 using Login.Api.Security.Base;
 using Login.Api.Security.Options;
+using Login.Domain;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Login.Api.Security
 {
     public class EmailConfirmationTokenProvider<TUser> : BaseTokenProvider<TUser>
-        where TUser : IdentityUser
+        where TUser : ApplicationUser
     {
         public EmailConfirmationTokenProvider(IDataProtectionProvider dataProtectionProvider,
                                               IOptions<EmailConfirmationTokenProviderOptions> options,
