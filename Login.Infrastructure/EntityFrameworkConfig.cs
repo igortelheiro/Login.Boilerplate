@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Login.EntityFrameworkAdapter
 {
-    public static class EFConfig
+    public static class EntityFrameworkConfig
     {
         public static void ConfigureEntityFramework(this IServiceCollection services, IConfiguration configuration)
         {

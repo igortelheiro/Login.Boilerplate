@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Events;
+using System;
 
 namespace Login.Api
 {
@@ -7,22 +10,33 @@ namespace Login.Api
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .CreateLogger();
+
+            try
+            {
+                Log.Information("Starting Login.Api");
+                CreateHostBuilder(args).Build().Run();
+                Environment.Exit(0);
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Host terminated unexpectedly");
+                Environment.Exit(1);
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                //.UseSerilog((host, log) =>
-                //{
-                //    if (host.HostingEnvironment.IsProduction())
-                //        log.MinimumLevel.Information();
-                //    else
-                //        log.MinimumLevel.Debug();
-
-                //    log.MinimumLevel.Override("Microsoft", LogEventLevel.Warning);
-                //    log.MinimumLevel.Override("Quartz", LogEventLevel.Information);
-                //    log.WriteTo.Console();
-                //})
+                .UseSerilog()
                 .ConfigureWebHostDefaults(builder => builder.UseStartup<Startup>());
     }
 }
