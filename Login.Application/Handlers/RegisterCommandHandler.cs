@@ -54,6 +54,7 @@ namespace Login.Application.Handlers
                     Email = newUser.Email
                 };
                 await _bus.PublishAsync(userCreated);
+                //TODO: LogEvent(userCreated);
 
                 var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
                 var email = _emailBuilder.BuildAccontConfirmationEmail(newUser, confirmationToken);

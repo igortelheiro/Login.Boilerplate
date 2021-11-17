@@ -38,7 +38,7 @@ namespace Login.Application.Services
                 _jwtConfiguration.Issuer,
                 _jwtConfiguration.Audience,
                 claims,
-                _jwtConfiguration.Expiry,
+                expires: _jwtConfiguration.Expiry,
                 signingCredentials: _jwtConfiguration.SigningCredentials
             );
 

@@ -42,9 +42,7 @@ namespace Login.Application.Handlers
             await ValidateCredentialsAsync(user, command);
 
             var token = await _tokenProvider.GenerateJwt(user);
-            var refreshToken = command.RememberMe
-                ? await _tokenProvider.GenerateAndStoreTokenAsync(user, TokenPurpose.Refresh)
-                : null;
+            var refreshToken = await _tokenProvider.GenerateAndStoreTokenAsync(user, TokenPurpose.Refresh);
 
             return new LoginResult { Token = token, RefreshToken = refreshToken };
         }
