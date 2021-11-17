@@ -16,12 +16,15 @@ namespace Login.Application.Handlers
         #region Initialize
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailBuilderService _emailBuilder;
+        private readonly IServiceProvider _serviceProvider;
 
         public RegisterCommandHandler(UserManager<IdentityUser> userManager,
-                                      IEmailBuilderService emailBuilder)
+                                      IEmailBuilderService emailBuilder,
+                                      IServiceProvider serviceProvider)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _emailBuilder = emailBuilder ?? throw new ArgumentNullException(nameof(emailBuilder));
+            _serviceProvider = serviceProvider;
         }
         #endregion
 
@@ -32,7 +35,7 @@ namespace Login.Application.Handlers
 
             var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
             var email = _emailBuilder.BuildAccontConfirmationEmail(newUser, confirmationToken);
-            await email.Send();
+            await email.Send(_serviceProvider);
 
             return new RegisterResult { NewUserId = newUser.Id };
         }

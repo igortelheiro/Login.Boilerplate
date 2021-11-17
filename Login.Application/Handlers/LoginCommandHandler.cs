@@ -18,16 +18,19 @@ namespace Login.Application.Handlers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ITokenProviderService _tokenProvider;
         private readonly IEmailBuilderService _emailBuilder;
+        private readonly IServiceProvider _serviceProvider;
 
         public LoginCommandHandler(UserManager<IdentityUser> userManager,
                                    SignInManager<IdentityUser> signInManager,
                                    IEmailBuilderService emailBuilder,
-                                   ITokenProviderService tokenProvider)
+                                   ITokenProviderService tokenProvider,
+                                   IServiceProvider serviceProvider)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
             _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
             _emailBuilder = emailBuilder ?? throw new ArgumentNullException(nameof(emailBuilder));
+            _serviceProvider = serviceProvider;
         }
         #endregion
 
@@ -77,7 +80,7 @@ namespace Login.Application.Handlers
         {
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var email = _emailBuilder.BuildAccontConfirmationEmail(user, token);
-            await email.Send();
+            await email.Send(_serviceProvider);
         }
     }
 }
