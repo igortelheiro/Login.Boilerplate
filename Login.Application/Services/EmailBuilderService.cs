@@ -10,7 +10,7 @@ namespace Login.Application.Services
     {
         private const string TokenBoxStyle = "padding: 6px 16px; border-color: rgb(35, 78, 215); font-size: 20px";
 
-        public EmailRequest BuildAccontConfirmationEmail(ApplicationUser user, string token)
+        public EmailRequest BuildAccontConfirmationEmail(IdentityUser user, string token)
         {
             var subject = "Confirmação de Conta";
             var message = "Utilize o token abaixo para confirmar sua conta:";
@@ -19,7 +19,7 @@ namespace Login.Application.Services
         }
 
 
-        public EmailRequest BuildPasswordRecoveryEmail(ApplicationUser user, string token)
+        public EmailRequest BuildPasswordRecoveryEmail(IdentityUser user, string token)
         {
             var subject = "Recuperação de Senha";
             var message = "Utilize o token abaixo para redefinir sua senha:";
@@ -28,7 +28,7 @@ namespace Login.Application.Services
         }
 
 
-        private EmailRequest BuildEmailWithToken(ApplicationUser user, string subject, string message, string token)
+        private EmailRequest BuildEmailWithToken(IdentityUser user, string subject, string message, string token)
         {
             var emailTemplate = new StringBuilder();
             emailTemplate.AppendLine($"<p>Querido(a) {user.UserName},</p>");

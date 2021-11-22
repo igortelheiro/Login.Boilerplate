@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using IntegrationEventLogEF.Utilities;
 using Login.Application.Extensions;
-using Login.Domain;
 using Login.EntityFrameworkAdapter.Context;
 
 namespace Login.Application.Handlers
@@ -19,13 +18,13 @@ namespace Login.Application.Handlers
     public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisterResult>
     {
         #region Initialize
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailBuilderService _emailBuilder;
         private readonly IServiceProvider _serviceProvider;
         private readonly IEventBus _bus;
         private readonly ApplicationDbContext _dbContext;
 
-        public RegisterCommandHandler(UserManager<ApplicationUser> userManager,
+        public RegisterCommandHandler(UserManager<IdentityUser> userManager,
                                       IEmailBuilderService emailBuilder,
                                       IServiceProvider serviceProvider,
                                       IEventBus bus,
@@ -42,7 +41,7 @@ namespace Login.Application.Handlers
 
         public async Task<RegisterResult> Handle(RegisterCommand command, CancellationToken cancellationToken)
         {
-            ApplicationUser newUser = null;
+            IdentityUser newUser = null;
 
             await ResilientTransaction.New(_dbContext).ExecuteAsync(async _ =>
             {
@@ -65,17 +64,13 @@ namespace Login.Application.Handlers
         }
 
 
-        private async Task<ApplicationUser> CreateUserAsync(RegisterCommand command)
+        private async Task<IdentityUser> CreateUserAsync(RegisterCommand command)
         {
-            var newUser = new ApplicationUser
+            var newUser = new IdentityUser
             {
                 Email = command.Email,
-                NomeCompleto = command.NomeCompleto,
                 UserName = command.Email,
-                PhoneNumber = command.PhoneNumber,
-                CondominioId = command.CondominioId,
-                Bloco = command.Bloco,
-                NumeroApto = command.NumeroApto
+                PhoneNumber = command.PhoneNumber
             };
 
             var result = await _userManager.CreateAsync(newUser, command.Password).ConfigureAwait(false);

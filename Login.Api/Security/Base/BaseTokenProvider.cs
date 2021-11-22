@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 namespace Login.Api.Security.Base
 {
     public abstract class BaseTokenProvider<TUser> : DataProtectorTokenProvider<TUser>
-        where TUser : ApplicationUser
+        where TUser : IdentityUser
     {
         protected BaseTokenProvider(IDataProtectionProvider dataProtectionProvider,
                                            IOptions<BaseTokenProviderOptions> options,

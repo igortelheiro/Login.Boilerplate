@@ -6,11 +6,12 @@ using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using System;
 using Login.Domain;
+using Microsoft.AspNetCore.Identity;
 
 namespace Login.Api.Security
 {
     public class ResetPasswordTokenProvider<TUser> : BaseTokenProvider<TUser>
-        where TUser : ApplicationUser
+        where TUser : IdentityUser
     {
         public ResetPasswordTokenProvider(IDataProtectionProvider dataProtectionProvider,
                                           IOptions<ResetPasswordTokenProviderOptions> options,

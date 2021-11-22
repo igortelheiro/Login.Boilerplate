@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 namespace Login.Api.Security
 {
     public class RefreshTokenProvider<TUser> : DataProtectorTokenProvider<TUser>
-        where TUser : ApplicationUser
+        where TUser : IdentityUser
     {
         public RefreshTokenProvider(IDataProtectionProvider dataProtectionProvider,
                                     IOptions<RefreshTokenProviderOptions> options,

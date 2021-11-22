@@ -14,16 +14,16 @@ namespace Login.Application.Services
 {
     public class TokenProviderService : ITokenProviderService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly JwtConfiguration _jwtConfiguration;
-        public TokenProviderService(UserManager<ApplicationUser> userManager, IOptions<JwtConfiguration> jwtOptions)
+        public TokenProviderService(UserManager<IdentityUser> userManager, IOptions<JwtConfiguration> jwtOptions)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _jwtConfiguration = jwtOptions.Value ?? throw new ArgumentNullException(nameof(jwtOptions));
         }
 
 
-        public async Task<string> GenerateJwt(ApplicationUser user)
+        public async Task<string> GenerateJwt(IdentityUser user)
         {
             var defaultClaims = new[]
             {
@@ -46,7 +46,7 @@ namespace Login.Application.Services
         }
 
 
-        public async Task<string> GenerateAndStoreTokenAsync(ApplicationUser user, TokenPurpose tokenPurpose)
+        public async Task<string> GenerateAndStoreTokenAsync(IdentityUser user, TokenPurpose tokenPurpose)
         {
             var tokenName = tokenPurpose.GetName();
             var tokenProvider = tokenPurpose.GetProviderName();
@@ -59,7 +59,7 @@ namespace Login.Application.Services
         }
 
 
-        public async Task<bool> ValidateTokenAsync(ApplicationUser user, TokenPurpose tokenPurpose, string token)
+        public async Task<bool> ValidateTokenAsync(IdentityUser user, TokenPurpose tokenPurpose, string token)
         {
             var tokenName = tokenPurpose.GetName();
             var tokenProvider = tokenPurpose.GetProviderName();

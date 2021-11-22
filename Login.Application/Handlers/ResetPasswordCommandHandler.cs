@@ -13,9 +13,9 @@ namespace Login.Application.Handlers
     public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand>
     {
         #region Initilize
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<IdentityUser> _userManager;
         private readonly ITokenProviderService _tokenProvider;
-        public ResetPasswordCommandHandler(UserManager<ApplicationUser> userManager, ITokenProviderService tokenProvider)
+        public ResetPasswordCommandHandler(UserManager<IdentityUser> userManager, ITokenProviderService tokenProvider)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
@@ -34,7 +34,7 @@ namespace Login.Application.Handlers
         }
 
 
-        private async Task<ApplicationUser> GetUserAsync(string email)
+        private async Task<IdentityUser> GetUserAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
@@ -44,7 +44,7 @@ namespace Login.Application.Handlers
         }
 
 
-        private void ValidateNewPassword(ApplicationUser user, string newPassword)
+        private void ValidateNewPassword(IdentityUser user, string newPassword)
         {
             _userManager.PasswordValidators.All(v =>
             {
@@ -57,7 +57,7 @@ namespace Login.Application.Handlers
         }
 
 
-        private async Task ResetPasswordAsync(ApplicationUser user, ResetPasswordCommand request)
+        private async Task ResetPasswordAsync(IdentityUser user, ResetPasswordCommand request)
         {
             var passwordReset = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
             if (passwordReset.Succeeded == false)

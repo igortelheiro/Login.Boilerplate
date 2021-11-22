@@ -31,7 +31,7 @@ namespace Login.Api.Configuration
                 options.SignIn.RequireConfirmedEmail = true;
             });
 
-            services.AddDefaultIdentity<ApplicationUser>()
+            services.AddDefaultIdentity<IdentityUser>()
                 .AddErrorDescriber<PortugueseIdentityErrorDescriber>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddCustomTokenProviders();
