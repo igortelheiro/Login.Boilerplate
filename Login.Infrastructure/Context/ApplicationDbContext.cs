@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Login.Domain;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Login.Infrastructure.Context
+namespace Login.EntityFrameworkAdapter.Context
 {
     public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {

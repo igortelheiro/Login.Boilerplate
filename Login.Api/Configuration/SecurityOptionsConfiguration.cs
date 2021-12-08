@@ -5,7 +5,7 @@ using Login.Api.Security.Options;
 using Login.Application.Models;
 using Login.Domain;
 using Login.Domain.Extensions;
-using Login.Infrastructure.Context;
+using Login.EntityFrameworkAdapter.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;

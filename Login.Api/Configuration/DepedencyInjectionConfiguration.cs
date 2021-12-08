@@ -16,11 +16,11 @@ namespace Login.Api.Configuration
             services.AddScoped<IEmailBuilderService, EmailBuilderService>();
             services.AddScoped<ITokenProviderService, TokenProviderService>();
 
-            services.ConfigureSecurityOptions(configuration);
-
             services.ConfigureEntityFramework(configuration);
 
-            services.ConfigureEventBus();
+            services.ConfigureSecurityOptions(configuration);
+
+            services.ConfigureEventBus(configuration);
 
             services.AddMediatR(typeof(LoginCommand));
 

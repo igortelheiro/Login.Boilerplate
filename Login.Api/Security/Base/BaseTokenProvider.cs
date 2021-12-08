@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using Login.Api.Security.Extensions;
+using Login.Domain;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;

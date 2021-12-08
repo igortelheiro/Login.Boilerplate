@@ -1,4 +1,5 @@
 ﻿using Login.Api.Security.Options;
+using Login.Domain;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;

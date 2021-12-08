@@ -1,11 +1,12 @@
 ﻿using Login.Api.Security.Base;
 using Login.Api.Security.Options;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using System;
+using Login.Domain;
+using Microsoft.AspNetCore.Identity;
 
 namespace Login.Api.Security
 {

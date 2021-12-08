@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using Login.Application.Extensions;
+using Login.Domain;
 
 namespace Login.Api.Controllers
 {
@@ -15,12 +16,15 @@ namespace Login.Api.Controllers
         #region Initialize
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailBuilderService _emailBuilder;
+        private readonly IServiceProvider _serviceProvider;
 
         public MailController(UserManager<IdentityUser> userManager,
-                              IEmailBuilderService emailBuilder)
+                              IEmailBuilderService emailBuilder,
+                              IServiceProvider serviceProvider)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _emailBuilder = emailBuilder ?? throw new ArgumentNullException(nameof(emailBuilder));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
         #endregion
 
@@ -37,7 +41,7 @@ namespace Login.Api.Controllers
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
                 var email = _emailBuilder.BuildAccontConfirmationEmail(user, token);
-                await email.Send();
+                await email.Send(_serviceProvider);
 
                 return Ok();
             }
@@ -60,7 +64,7 @@ namespace Login.Api.Controllers
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
                 var email = _emailBuilder.BuildPasswordRecoveryEmail(user, token);
-                await email.Send();
+                await email.Send(_serviceProvider);
 
                 return Ok();
             }
