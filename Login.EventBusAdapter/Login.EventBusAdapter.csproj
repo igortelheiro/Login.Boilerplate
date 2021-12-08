@@ -7,10 +7,7 @@
   <ItemGroup>
     <PackageReference Include="EventBus.Core" Version="2.0.11" />
     <PackageReference Include="IntegrationEventLogEF" Version="2.0.11" />
-    <PackageReference Include="MassTransit.EventBus.Core" Version="2.0.11" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="7.3.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
-    <PackageReference Include="RabbitMQEventBus" Version="2.0.11" />
   </ItemGroup>
 
   <ItemGroup>
