@@ -1,9 +1,9 @@
-﻿using System;
-using Login.Domain;
+﻿using Login.Domain;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Threading.Tasks;
 using EventBus.Core.Events;
 using EventBus.Core.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Login.Application.Extensions
 {

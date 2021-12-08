@@ -60,8 +60,7 @@ namespace Login.Application.Handlers
 
         private async Task ValidateCredentialsAsync(IdentityUser user, LoginCommand command)
         {
-            var validation = await _signInManager
-                .PasswordSignInAsync(user, command.Password, command.RememberMe,
+            var validation = await _signInManager.PasswordSignInAsync(user, command.Password, command.RememberMe,
                     lockoutOnFailure: false).ConfigureAwait(false);
             if (validation.Succeeded)
                 return;
