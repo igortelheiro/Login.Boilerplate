@@ -20,7 +20,7 @@ namespace Login.Api.Configuration
 
             services.ConfigureSecurityOptions(configuration);
 
-            services.ConfigureEventBus();
+            services.ConfigureEventBus(configuration);
 
             services.AddMediatR(typeof(LoginCommand));
 

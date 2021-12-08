@@ -1,9 +1,11 @@
-﻿using Login.Domain;
+﻿using EventBus.Core.Events;
+using IntegrationEventLogEF;
+using IntegrationEventLogEF.Services;
+using Login.Domain;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
-using EventBus.Core.Events;
-using EventBus.Core.Interfaces;
 
 namespace Login.Application.Extensions
 {
@@ -11,7 +13,11 @@ namespace Login.Application.Extensions
     {
         public static async Task Send(this EmailRequest email, IServiceProvider sp)
         {
-            var bus = sp.GetRequiredService<IEventBus>();
+            var eventLogService = sp.GetRequiredService<IIntegrationEventLogService>();
+            var dbContext = sp.GetRequiredService<IntegrationEventLogContext>();
+
+            var transactionId = dbContext.Database.CurrentTransaction?.TransactionId ?? Guid.NewGuid();
+            var cancellationToken = new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token;
 
             var emailRequested = new EmailRequestedEvent
             {
@@ -20,7 +26,7 @@ namespace Login.Application.Extensions
                 Content = email.Content,
                 Template = email.Template
             };
-            await bus.PublishAsync(emailRequested);
+            await eventLogService.SaveEventLogAsync(emailRequested, transactionId, cancellationToken);
         }
     }
 }
